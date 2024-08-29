@@ -31,10 +31,10 @@ const Register = () => {
             <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                 <img
                     alt="Your Company"
-                    src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-                    className="mx-auto h-10 w-auto"
+                     src="/src/images/1.png"
+          className="mx-auto h-16 w-auto"
                 />
-                <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+                <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900 font-almarai">
                     انشاء حساب جديد
                 </h2>
             </div>
@@ -42,7 +42,7 @@ const Register = () => {
             <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div>
-                        <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
+                        <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900 font-almarai">
                             اسم المستخدم 
                         </label>
                         <div className="mt-2">
@@ -60,7 +60,7 @@ const Register = () => {
                     </div>
 
                     <div>
-                        <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
+                        <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900 font-almarai">
                             الرمز
                         </label>
                         <div className="mt-2">
@@ -94,16 +94,16 @@ const Register = () => {
                     <div>
                         <button
                             type="submit"
-                            className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                            className="flex w-full justify-center rounded-md font-almarai bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                         >
                             تسجيل
                         </button>
                     </div>
                 </form>
 
-                <p className="mt-10 text-center text-sm text-gray-500">
+                <p className="mt-10 text-center text-sm text-gray-500 font-almarai">
                      هل لديك حساب بالفعل؟ {' '}
-                    <a href="/login" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
+                    <a href="/login" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500 font-almarai">
                          تسجيل الدخول
                     </a>
                 </p>
