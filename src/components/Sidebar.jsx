@@ -22,23 +22,23 @@ const Sidebar = () => {
       </div>
       <div className="flex cursor-pointer items-center gap-[15px] py-[20px] border-b-[1px] border-[#ededed]/[0.3]">
       <FaUsers color="white" />
-        <p className="font-almarai text-white font-bold"> اداره الشعب</p>
+        <p className="font-almarai text-white font-bold">  الشعب</p>
       </div>
       <div className="flex cursor-pointer items-center gap-[15px] py-[20px] border-b-[1px] border-[#ededed]/[0.3]">
       <FaBook color="white" />
-        <p className="font-almarai text-white font-bold"> اداره المواد</p>
+        <p className="font-almarai text-white font-bold">  المواد</p>
       </div>
       <div className="flex cursor-pointer items-center gap-[15px] py-[20px] border-b-[1px] border-[#ededed]/[0.3]">
       <FaUserGraduate color="white" />
-        <p className="font-almarai text-white font-bold"> اداره الطلبه</p>
+        <p className="font-almarai text-white font-bold">  الطلبه</p>
       </div>
       <div className="flex cursor-pointer items-center gap-[15px] py-[20px] border-b-[1px] border-[#ededed]/[0.3]">
       <FaChalkboardTeacher color="white" />
-        <p className="font-almarai text-white font-bold"> اداره التدريسيين</p>
+        <p className="font-almarai text-white font-bold">  التدريسيين</p>
       </div>
       <div className="flex cursor-pointer items-center gap-[15px] py-[20px] border-b-[1px] border-[#ededed]/[0.3]">
       <FaChartBar color="white" />
-        <p className="font-almarai text-white font-bold"> اداره الدرجات</p>
+        <p className="font-almarai text-white font-bold">  الدرجات</p>
       </div>
       <div className="flex cursor-pointer items-center gap-[15px] py-[20px] border-b-[1px] border-[#ededed]/[0.3]">
       <FaClipboardList color="white" />
