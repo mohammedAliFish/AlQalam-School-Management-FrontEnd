@@ -1,7 +1,7 @@
 
-import Dashboardview from "../components/Dashboardview"
+import Dashboardview from "../components/DashboardComponents/Dashboardview"
 import Sidebar from "../components/Sidebar"
-import Main from "../components/Main"
+import Main from "../components/DashboardComponents/Main"
 
 
 const Dashboard = () => {

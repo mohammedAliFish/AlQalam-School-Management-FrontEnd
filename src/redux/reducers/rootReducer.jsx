@@ -1,6 +1,13 @@
 import { combineReducers } from "redux";
-import studentsReducer from './studentsReducer'
-export default combineReducers({
+import classesReducer from './classesReducer';
+import mainPageReducer from './mainPageReducer';
+import teachersReducer from './teachersReducer';
+import subjectsReducer from './subjectsReducer';
+const rootReducer = combineReducers({
+  allClasses: classesReducer,
+  mainPage: mainPageReducer,
+  allTeachers: teachersReducer,
+  allSubjects: subjectsReducer,
+});
 
-    allStudents : studentsReducer
-})
+export default rootReducer;
