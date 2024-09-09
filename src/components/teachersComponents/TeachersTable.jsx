@@ -1,94 +1,72 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getSubjects, addSubject, updateSubject, deleteSubject } from '../redux/action/subjectsActions'; 
-import { Card, Typography, Button } from "@material-tailwind/react";
-import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
+import { getTeachers, addTeacher, updateTeacher, deleteTeacher } from '../../redux/action/teachersActions'; 
 import Modal from 'react-modal';
-import baseUrl from "../api/api";
+import { Button, Card, Typography } from '@material-tailwind/react';
+import { FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
+
 Modal.setAppElement('#root');
 
-const SubjectsTable = () => {
+const TeachersTable = () => {
   const dispatch = useDispatch();
   
- 
-  const { subjects } = useSelector(state => state.allSubjects);
+
+  const { teachers } = useSelector(state => state.allTeachers);
   
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentSubject, setCurrentSubject] = useState({ subjectId: null, name: "" });
+  const [currentTeacher, setCurrentTeacher] = useState({ teacherId: null, name: "" });
   const [isEditing, setIsEditing] = useState(false);
 
   
   useEffect(() => {
-    dispatch(getSubjects());
+    dispatch(getTeachers());
   }, [dispatch]);
 
-
-  const openModal = (subject = { subjectId: null, name: "" }) => {
-    setCurrentSubject(subject);
-    setIsEditing(!!subject.subjectId);
+  
+  const openModal = (teacher = { teacherId: null, name: "" }) => {
+    setCurrentTeacher(teacher);
+    setIsEditing(!!teacher.teacherId);
     setIsModalOpen(true);
   };
 
   
   const closeModal = () => {
     setIsModalOpen(false);
-    setCurrentSubject({ subjectId: null, name: "" });
+    setCurrentTeacher({ teacherId: null, name: "" });
     setIsEditing(false);
   };
 
- 
+  
   const handleSave = () => {
     if (isEditing) {
-     
-      dispatch(updateSubject(currentSubject))
-
-        .then(() => {
-          dispatch(getSubjects());
-          console.log(currentSubject) 
-        });
+      
+      dispatch(updateTeacher(currentTeacher));
     } else {
-    
-      dispatch(addSubject(currentSubject))
-        .then(() => {
-          dispatch(getSubjects());  
-        });
+      
+      dispatch(addTeacher(currentTeacher));
     }
     closeModal(); 
   };
 
-  const handleDelete = async (subjectId) => {
-    const confirmed = window.confirm("هل أنت متأكد من حذف هذه المادة؟");
+  
+  const handleDelete = (teacherId) => {
+    const confirmed = window.confirm("هل أنت متأكد من حذف هذا المعلم؟");
     if (confirmed) {
-      try {
-        
-        await baseUrl.delete(`/api/subjects/${subjectId}`);
-        
-        
-        dispatch(deleteSubject(subjectId))
-        .then(() => {
-          dispatch(getSubjects()); 
-        });
-        
-      } catch (error) {
-        console.error("حدث خطأ أثناء حذف المادة:", error);
-      }
+      dispatch(deleteTeacher(teacherId));
     }
   };
-  
-  
-  
 
-  const TABLE_HEAD = ["اسم المادة", "الإجراءات"];
+  const TABLE_HEAD = ["اسم التدريسي", "الإجراءات"];
 
   return (
     <div className="mx-[25px] mt-[25px] w-[200%]">
       <div className="flex justify-between items-center p-4">
-        <h2 className="font-bold text-xl sm:text-2xl mb-4 sm:mb-0">قائمة المواد الدراسية</h2>
+        <h2 className="font-bold">قائمة التدريسين</h2>
         <Button
           className="flex items-center gap-2 bg-[#4e73df]"
           onClick={() => openModal()}
         >
-          <span>إضافة مادة</span>
+          <span>إضافة تدريسي</span>
           <FaPlus className="h-5 w-3" />
         </Button>
       </div>
@@ -113,12 +91,12 @@ const SubjectsTable = () => {
             </tr>
           </thead>
           <tbody>
-            {subjects.map(({ subjectId, name }, index) => {
-              const isLast = index === subjects.length - 1;
+            {teachers.map(({ teacherId, name }, index) => {
+              const isLast = index === teachers.length - 1;
               const rowClasses = isLast ? "p-4" : "p-4 border-b border-blue-gray-50 text-center";
 
               return (
-                <tr key={subjectId}>
+                <tr key={teacherId}>
                   <td className={rowClasses}>
                     <Typography
                       variant="small"
@@ -130,13 +108,13 @@ const SubjectsTable = () => {
                   </td>
                   <td className={rowClasses}>
                     <Button
-                      onClick={() => openModal({ subjectId, name })}
+                      onClick={() => openModal({ teacherId, name })}
                       className="mr-2"
                     >
                       <FaEdit className="h-5 w-5 text-blue-600" />
                     </Button>
                     <Button
-                      onClick={() => handleDelete(subjectId)}
+                      onClick={() => handleDelete(teacherId)}
                       color="red"
                     >
                       <FaTrash className="h-5 w-5 text-red-600" />
@@ -149,22 +127,22 @@ const SubjectsTable = () => {
         </table>
       </Card>
 
-     
+      {/* النافذة المنبثقة لإضافة أو تعديل معلم */}
       <Modal
         isOpen={isModalOpen}
         onRequestClose={closeModal}
-        contentLabel={isEditing ? "تعديل المادة" : "إضافة مادة"}
+        contentLabel={isEditing ? "تعديل المعلم" : "إضافة تدريسي"}
         className="bg-white p-8 rounded-md shadow-lg w-1/2 mx-auto my-20 font-almarai"
         overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
       >
-        <h2 className="text-xl font-bold mb-4">{isEditing ? "تعديل المادة" : "إضافة مادة"}</h2>
+        <h2 className="text-xl font-bold mb-4">{isEditing ? "تعديل المعلم" : "إضافة تدريسي"}</h2>
         <div>
-          <label>اسم المادة:</label>
+          <label>اسم تدريسي:</label>
           <input
             type="text"
             className="border p-2 w-full rounded-md"
-            value={currentSubject.name}
-            onChange={(e) => setCurrentSubject({ ...currentSubject, name: e.target.value })}
+            value={currentTeacher.name}
+            onChange={(e) => setCurrentTeacher({ ...currentTeacher, name: e.target.value })}
           />
         </div>
         <div className="flex justify-between mt-4">
@@ -178,4 +156,4 @@ const SubjectsTable = () => {
   );
 };
 
-export default SubjectsTable;
+export default TeachersTable;

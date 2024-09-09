@@ -20,7 +20,7 @@ const Sidebar = () => {
       </div>
       <div className="flex cursor-pointer items-center gap-[15px] py-[20px] border-b-[1px] border-[#ededed]/[0.3]">
         <FaTachometerAlt color="white"/>
-        <Link to="/" className="font-almarai text-white font-bold">لوحة التحكم</Link>
+        <Link to="/dashboard" className="font-almarai text-white font-bold">لوحة التحكم</Link>
       </div>
       <div className="flex cursor-pointer items-center gap-[15px] py-[20px] border-b-[1px] border-[#ededed]/[0.3]">
         <FaUsers color="white" />
