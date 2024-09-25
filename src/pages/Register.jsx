@@ -15,11 +15,11 @@ const Register = () => {
 
         try {
             const response = await axios.post('https://localhost:7025/api/auth/register', { email, password });
-            // التعامل مع الاستجابة، مثل عرض رسالة نجاح أو التوجيه إلى صفحة تسجيل الدخول
+          
             setSuccess('Registration successful. Please log in.');
             setError('');
         } catch (err) {
-            // التعامل مع الأخطاء، مثل عرض رسالة خطأ
+           
             console.error('Registration error', err);
             setError('An error occurred during registration');
             setSuccess('');

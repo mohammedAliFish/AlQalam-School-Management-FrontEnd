@@ -309,14 +309,14 @@ const ClassesTable = () => {
                       {gradeLevel?.levelName || "غير متاح"}
                     </Typography>
                   </td>
-                  <td className={rowClasses}>
+                  <td className={rowClasses} >
                     <Button
                       onClick={() => handleEdit(classId)}
                       className="mr-2"
                     >
                       <FaEdit className="h-5 w-5 text-blue-600" />
                     </Button>
-                    <Button onClick={() => handleDelete(classId)} color="red">
+                    <Button onClick={() => handleDelete(classId)}>
                       <FaTrash className="h-5 w-5 text-red-600" />
                     </Button>
                   </td>

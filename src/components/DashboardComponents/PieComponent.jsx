@@ -18,7 +18,7 @@ const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, per
 const PieComponent = ({ data }) => {
   return (
     <div>
-      {/* مخطط دائري */}
+      
       <PieChart width={400} height={400}>
         <Pie
           data={data}
@@ -36,7 +36,7 @@ const PieComponent = ({ data }) => {
         </Pie>
       </PieChart>
 
-      {/* عرض الأسماء والألوان */}
+      
       <div className=''>
         <div className="flex justify-between ">
           {data.map((item, index) => (
@@ -44,7 +44,7 @@ const PieComponent = ({ data }) => {
           ))}
         </div>
 
-        {/* مربعات الألوان */}
+      
         <div className="flex justify-between mt-2">
           {COLORS.map((item, index) => (
             <div className="h-[30px] w-[30px] rounded-full" style={{ backgroundColor: item }} key={index}></div>
@@ -57,9 +57,9 @@ const PieComponent = ({ data }) => {
 PieComponent.propTypes = {
   data: PropTypes.arrayOf(
     PropTypes.shape({
-      name: PropTypes.string.isRequired, // يجب أن يكون الاسم نصاً
-      value: PropTypes.number.isRequired, // يجب أن تكون القيمة رقماً
+      name: PropTypes.string.isRequired, 
+      value: PropTypes.number.isRequired, 
     })
-  ).isRequired, // يجب أن تكون البيانات مصفوفة ومطلوبة
+  ).isRequired, 
 };
 export default PieComponent;

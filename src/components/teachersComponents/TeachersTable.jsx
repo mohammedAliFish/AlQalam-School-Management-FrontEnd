@@ -127,7 +127,7 @@ const TeachersTable = () => {
         </table>
       </Card>
 
-      {/* النافذة المنبثقة لإضافة أو تعديل معلم */}
+      
       <Modal
         isOpen={isModalOpen}
         onRequestClose={closeModal}

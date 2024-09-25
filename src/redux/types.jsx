@@ -14,3 +14,13 @@ export const GET_ALL_SUBJECTS = "GET_ALL_SUBJECTS";
 export const ADD_SUBJECTS = "ADD_SUBJECTS";
 export const UPDATE_SUBJECT = "UPDATE_SUBJECT";
 export const DELETE_SUBJECT = "DELETE_SUBJECT";
+
+export const GET_ALL_STUDENTS = "GET_ALL_STUDENTS";
+export const ADD_STUDENT = "ADD_STUDENT";
+export const UPDATE_STUDENT = "UPDATE_STUDENT";
+export const DELETE_STUDENT = "DELETE_STUDENT";
+
+export const GET_ALL_GRADES = "GET_ALL_GRADES";
+export const ADD_GRADE = "ADD_GRADE";
+export const UPDATE_GRADE = "UPDATE_GRADE";
+export const DELETE_GRADE = "DELETE_GRADE";
