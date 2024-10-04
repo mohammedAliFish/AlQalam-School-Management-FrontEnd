@@ -1,9 +1,10 @@
 // reducers/studentReducer.js
 
-import { GET_ALL_STUDENTS, ADD_STUDENT, UPDATE_STUDENT, DELETE_STUDENT } from '../types';
+import { GET_ALL_STUDENTS, ADD_STUDENT, UPDATE_STUDENT, DELETE_STUDENT , GET_STATUESES} from '../types';
 
 const initialState = {
   students: [],
+  studentStatuses: [] 
 };
 
 export const studentReducer = (state = initialState, action) => {
@@ -18,6 +19,11 @@ export const studentReducer = (state = initialState, action) => {
         ...state,
         students: [...state.students, action.payload],
       };
+      case GET_STATUESES:
+        return {
+          ...state,
+          studentStatuses: [...state.students, action.payload],
+        };
     case UPDATE_STUDENT:
       return {
         ...state,

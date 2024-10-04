@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Modal from "react-modal";
 import { Card, Typography, Button } from "@material-tailwind/react";
-import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
+import { FaEdit, FaTrash, FaPlus, FaTimes } from "react-icons/fa";
 import {
   getClasses,
   addClass,
@@ -13,7 +13,6 @@ import baseUrl from "../../api/api";
 
 const ClassesTable = () => {
   const dispatch = useDispatch();
-
   const { classes } = useSelector((state) => state.allClasses);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -21,21 +20,22 @@ const ClassesTable = () => {
     classId: null,
     name: "",
     gradeLevelId: "",
-    subjectId: "",
-    teacherId: "",
     schoolId: "",
+    ClassSubjectTeachers: [{ subjectId: "", teacherId: "" }],
   });
   const [isEditing, setIsEditing] = useState(false);
 
   const [allSchools, setAllSchools] = useState([]);
   const [allSubjects, setAllSubjects] = useState([]);
   const [allTeachers, setAllTeachers] = useState([]);
+  const [allGradeLevels, setAllGradeLevels] = useState([]); 
 
   useEffect(() => {
     dispatch(getClasses());
     fetchSchools();
     fetchSubjects();
     fetchTeachers();
+    fetchGradeLevels(); 
   }, [dispatch]);
 
   const fetchSchools = async () => {
@@ -65,6 +65,15 @@ const ClassesTable = () => {
     }
   };
 
+  const fetchGradeLevels = async () => {
+    try {
+      const response = await baseUrl.get("/api/gradelevel");
+      setAllGradeLevels(response.data);
+    } catch (error) {
+      console.error("حدث خطأ أثناء جلب المراحل الدراسية:", error);
+    }
+  };
+
   const handleEdit = (classId) => {
     const cls = classes.find((c) => c.classId === classId);
     if (cls) {
@@ -80,9 +89,8 @@ const ClassesTable = () => {
       classId: null,
       name: "",
       gradeLevelId: "",
-      subjectId: "",
-      teacherId: "",
       schoolId: "",
+      ClassSubjectTeachers: [{ subjectId: "", teacherId: "" }],
     });
     setIsEditing(false);
   };
@@ -93,19 +101,13 @@ const ClassesTable = () => {
         name: currentClass.name,
         gradeLevelId: currentClass.gradeLevelId,
         schoolId: currentClass.schoolId,
-        ClassSubjectTeachers: [
-          {
-            subjectId: currentClass.subjectId,
-            teacherId: currentClass.teacherId,
-          },
-        ],
+        ClassSubjectTeachers: currentClass.ClassSubjectTeachers,
         classId: currentClass.classId,
       };
-      console.log("البيانات المرسلة:", dataToSend);
+
       if (isEditing) {
         await baseUrl.put(`/api/classes/${currentClass.classId}`, dataToSend);
         dispatch(updateClass({ ...dataToSend, classId: currentClass.classId }));
-        console.log(dataToSend);
       } else {
         await baseUrl.post(`/api/classes`, dataToSend);
       }
@@ -130,6 +132,36 @@ const ClassesTable = () => {
         console.error("حدث خطأ أثناء حذف الشعبة:", error);
       }
     }
+  };
+
+  const handleAddRow = () => {
+    setCurrentClass((prev) => ({
+      ...prev,
+      ClassSubjectTeachers: [
+        ...prev.ClassSubjectTeachers,
+        { subjectId: "", teacherId: "" },
+      ],
+    }));
+  };
+
+  const handleRemoveRow = (index) => {
+    const updatedRows = currentClass.ClassSubjectTeachers.filter(
+      (_, i) => i !== index
+    );
+    setCurrentClass((prev) => ({
+      ...prev,
+      ClassSubjectTeachers: updatedRows,
+    }));
+  };
+
+  const handleRowChange = (index, field, value) => {
+    const updatedRows = currentClass.ClassSubjectTeachers.map((row, i) =>
+      i === index ? { ...row, [field]: value } : row
+    );
+    setCurrentClass((prev) => ({
+      ...prev,
+      ClassSubjectTeachers: updatedRows,
+    }));
   };
 
   const TABLE_HEAD = ["الشعبة", "المرحلة الدراسية", "الإجراءات"];
@@ -196,60 +228,57 @@ const ClassesTable = () => {
               }
             >
               <option value="">اختر المرحلة الدراسية</option>
-              {classes.map(
-                (cls) =>
-                  cls.gradeLevel && (
-                    <option
-                      key={cls.gradeLevel.gradeLevelId}
-                      value={cls.gradeLevel.gradeLevelId}
-                    >
-                      {cls.gradeLevel.levelName}
+              {allGradeLevels.map((level) => (
+                <option key={level.gradeLevelId} value={level.gradeLevelId}>
+                  {level.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="mt-4">
+            <label>المواد والمدرسين:</label>
+            {currentClass.ClassSubjectTeachers.map((row, index) => (
+              <div key={index} className="flex items-center gap-4 mb-2">
+                <select
+                  className="border p-2 w-full rounded-md pr-9"
+                  value={row.subjectId}
+                  onChange={(e) =>
+                    handleRowChange(index, "subjectId", e.target.value)
+                  }
+                >
+                  <option value="">اختر المادة</option>
+                  {allSubjects.map((subject) => (
+                    <option key={subject.subjectId} value={subject.subjectId}>
+                      {subject.name}
                     </option>
-                  )
-              )}
-            </select>
-          </div>
-
-          <div className="mt-4">
-            <label>المادة:</label>
-            <select
-              className="border p-2 w-full rounded-md pr-9"
-              value={currentClass.subjectId}
-              onChange={(e) =>
-                setCurrentClass({
-                  ...currentClass,
-                  subjectId: e.target.value,
-                })
-              }
-            >
-              <option value="">اختر المادة</option>
-              {allSubjects.map((subject) => (
-                <option key={subject.subjectId} value={subject.subjectId}>
-                  {subject.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="mt-4">
-            <label>الأستاذ:</label>
-            <select
-              className="border p-2 w-full rounded-md pr-9"
-              value={currentClass.teacherId}
-              onChange={(e) =>
-                setCurrentClass({
-                  ...currentClass,
-                  teacherId: e.target.value,
-                })
-              }
-            >
-              <option value="">اختر الأستاذ</option>
-              {allTeachers.map((teacher) => (
-                <option key={teacher.teacherId} value={teacher.teacherId}>
-                  {teacher.name}
-                </option>
-              ))}
-            </select>
+                  ))}
+                </select>
+                <select
+                  className="border p-2 w-full rounded-md pr-9"
+                  value={row.teacherId}
+                  onChange={(e) =>
+                    handleRowChange(index, "teacherId", e.target.value)
+                  }
+                >
+                  <option value="">اختر الأستاذ</option>
+                  {allTeachers.map((teacher) => (
+                    <option key={teacher.teacherId} value={teacher.teacherId}>
+                      {teacher.name}
+                    </option>
+                  ))}
+                </select>
+                <Button
+                  className="bg-red-600"
+                  onClick={() => handleRemoveRow(index)}
+                >
+                  <FaTimes />
+                </Button>
+              </div>
+            ))}
+            <Button className="bg-green-600" onClick={handleAddRow}>
+              <FaPlus /> إضافة صف
+            </Button>
           </div>
 
           <div className="flex justify-between mt-4 ">
@@ -309,11 +338,8 @@ const ClassesTable = () => {
                       {gradeLevel?.levelName || "غير متاح"}
                     </Typography>
                   </td>
-                  <td className={rowClasses} >
-                    <Button
-                      onClick={() => handleEdit(classId)}
-                      className="mr-2"
-                    >
+                  <td className={rowClasses}>
+                    <Button onClick={() => handleEdit(classId)} className="mr-2">
                       <FaEdit className="h-5 w-5 text-blue-600" />
                     </Button>
                     <Button onClick={() => handleDelete(classId)}>

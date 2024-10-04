@@ -59,7 +59,7 @@ const TeachersTable = () => {
   const TABLE_HEAD = ["اسم التدريسي", "الإجراءات"];
 
   return (
-    <div className="mx-[25px] mt-[25px] w-[200%]">
+    <div className="mx-[25px] mt-[25px] w-[300%]">
       <div className="flex justify-between items-center p-4">
         <h2 className="font-bold">قائمة التدريسين</h2>
         <Button
@@ -115,7 +115,7 @@ const TeachersTable = () => {
                     </Button>
                     <Button
                       onClick={() => handleDelete(teacherId)}
-                      color="red"
+                      
                     >
                       <FaTrash className="h-5 w-5 text-red-600" />
                     </Button>

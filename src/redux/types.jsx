@@ -19,6 +19,7 @@ export const GET_ALL_STUDENTS = "GET_ALL_STUDENTS";
 export const ADD_STUDENT = "ADD_STUDENT";
 export const UPDATE_STUDENT = "UPDATE_STUDENT";
 export const DELETE_STUDENT = "DELETE_STUDENT";
+export const GET_STATUESES = "GET_STATUESES";
 
 export const GET_ALL_GRADES = "GET_ALL_GRADES";
 export const ADD_GRADE = "ADD_GRADE";

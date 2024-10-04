@@ -2,23 +2,16 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
 import Modal from 'react-modal';
+import { Button } from "@material-tailwind/react";
 import { getStudents, addStudent, updateStudent, deleteStudent } from '../../redux/action/studentsActions';
 import { getClasses } from '../../redux/action/classesActions';
-import baseUrl from "../../api/api";
-
+import baseUrl from "../../api/api"; 
+import MultipleImageInput from 'react-multiple-image-input';
 const StudentsTable = () => {
   const dispatch = useDispatch();
   const { students } = useSelector((state) => state.allStudents);
   const { classes } = useSelector((state) => state.allClasses);
-
   
-  const studentStatuses = [
-    { value: 'Ongoing', label: 'مستمر', statusId: 'STATUS_ONGOING_ID' },
-    { value: 'Transferred', label: 'منقول', statusId: 'STATUS_TRANSFERRED_ID' },
-    { value: 'Expelled', label: 'مفصول', statusId: 'STATUS_EXPELLED_ID' },
-    { value: 'Interrupted', label: 'منقطع', statusId: 'STATUS_INTERRUPTED_ID' }
-  ];
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentStudent, setCurrentStudent] = useState({
     studentId: null,
@@ -29,18 +22,44 @@ const StudentsTable = () => {
     gradeLevelName: '', 
   });
   const [isEditing, setIsEditing] = useState(false);
-
+  const [allGradeLevels, setAllGradeLevels] = useState([]);
+  const [isSaving, setIsSaving] = useState(false);
+  const [studentStatuses, setStudentStatuses] = useState([]); 
+  const [images, setImages] = useState({});
   useEffect(() => {
     dispatch(getStudents());
-    dispatch(getClasses()); 
+    dispatch(getClasses());
   }, [dispatch]);
 
+  useEffect(() => {
+    if (classes && classes.length > 0) {
+      const uniqueGradeLevels = Array.from(new Set(classes.map(cls => cls.gradeLevel?.levelName)))
+        .filter(Boolean) 
+        .map(levelName => {
+          const gradeLevel = classes.find(cls => cls.gradeLevel?.levelName === levelName)?.gradeLevel;
+          return gradeLevel;
+        });
+
+      setAllGradeLevels(uniqueGradeLevels);
+    }
+  }, [classes]);
+
   
+  const fetchStudentStatuses = async () => {
+    try {
+      const response = await baseUrl.get('/api/students/getStudentStatusList'); 
+      setStudentStatuses(response.data);
+    } catch (error) {
+      console.error('حدث خطأ أثناء جلب حالات الطالب:', error);
+    }
+  };
+
   const openModal = (student = { studentId: null, name: '', classId: '', studentStatus: '', statusId: '', gradeLevelName: '' }) => {
+    fetchStudentStatuses(); 
     setCurrentStudent({
       ...student,
       statusId: student.statusId || '',
-      studentStatus: studentStatuses.find(status => status.statusId === student.statusId)?.value || ''
+      studentStatus: student.studentStatus || ''
     });
     setIsEditing(!!student.studentId);
     setIsModalOpen(true);
@@ -56,37 +75,46 @@ const StudentsTable = () => {
       statusId: '',
       gradeLevelName: ''
     });
+    setImages({});
     setIsEditing(false);
   };
 
   const handleSave = async () => {
+    if (isSaving) return;
+  
+   
     const studentData = {
       name: currentStudent.name,
       classId: currentStudent.classId,
       statusId: currentStudent.statusId,
+      attachments: Object.values(images)  
     };
-
+  
+    console.log("البيانات المرسلة:", studentData);
+  
+    setIsSaving(true);
+  
     try {
       if (isEditing) {
-        await baseUrl.put(`/api/students/${currentStudent.studentId}`, studentData);
-        dispatch(updateStudent({ ...studentData, studentId: currentStudent.studentId }));
+        await dispatch(updateStudent({ ...studentData, studentId: currentStudent.studentId }));
       } else {
-        await baseUrl.post(`/api/students`, studentData);
-        dispatch(addStudent(studentData));
+        await dispatch(addStudent(studentData));
       }
-      dispatch(getStudents());
+  
+      await dispatch(getStudents());
       closeModal();
     } catch (error) {
       console.error("حدث خطأ أثناء حفظ الطالب:", error.response ? error.response.data : error.message);
+    } finally {
+      setIsSaving(false);
     }
   };
+  
 
   const handleDelete = async (studentId) => {
     if (window.confirm('هل أنت متأكد من حذف هذا الطالب؟')) {
       try {
-        await baseUrl.delete(`/api/students/${studentId}`);
-        dispatch(deleteStudent(studentId));
-        dispatch(getStudents());
+        await dispatch(deleteStudent(studentId));
       } catch (error) {
         console.error("حدث خطأ أثناء حذف الطالب:", error.response ? error.response.data : error.message);
       }
@@ -96,16 +124,16 @@ const StudentsTable = () => {
   const TABLE_HEAD = ["الاسم", "الشعبة", "حالة الطالب", "المستوى الدراسي", "الإجراءات"];
 
   return (
-    <div className="mx-[25px] mt-[25px] w-[200%]">
+    <div className="mx-[25px] mt-[25px] w-[170%]">
       <div className="flex justify-between items-center p-4 font-almarai">
         <h2 className="font-bold">قائمة الطلاب</h2>
-        <button
+        <Button
           className="flex items-center gap-2 bg-[#4e73df]"
           onClick={() => openModal()}
         >
           <span>إضافة طالب جديد</span>
           <FaPlus className="h-5 w-3" />
-        </button>
+        </Button>
         <Modal
           isOpen={isModalOpen}
           onRequestClose={closeModal}
@@ -125,6 +153,7 @@ const StudentsTable = () => {
               onChange={(e) => setCurrentStudent({ ...currentStudent, name: e.target.value })}
             />
           </div>
+
           <div className="mt-4">
             <label>الشعبة:</label>
             <select
@@ -135,7 +164,7 @@ const StudentsTable = () => {
                 setCurrentStudent({
                   ...currentStudent,
                   classId: e.target.value,
-                  gradeLevelName: selectedClass ? selectedClass.gradeLevel.levelName : '', 
+                  gradeLevelName: selectedClass ? selectedClass.gradeLevel.levelName : '',
                 });
               }}
             >
@@ -149,45 +178,72 @@ const StudentsTable = () => {
           </div>
 
           <div className="mt-4">
-            <label>حالة الطالب:</label>
+  <label>حالة الطالب:</label>
+  <select
+    className="border p-2 pr-9 w-full rounded-md"
+    value={currentStudent.statusId} 
+    onChange={(e) => {
+      const selectedStatus = studentStatuses.find(status => status.studentStatusId === e.target.value);
+      setCurrentStudent({
+        ...currentStudent,
+        statusId: e.target.value,  
+        studentStatus: selectedStatus ? selectedStatus.name : '',  
+      });
+    }}
+  >
+    <option value="">اختر حالة الطالب</option>
+    {studentStatuses.map((status) => (
+      <option key={status.studentStatusId} value={status.studentStatusId}>
+        {status.name}
+      </option>
+    ))}
+  </select>
+</div>
+
+
+
+
+          <div className="mt-4">
+            <label>المستوى الدراسي:</label>
             <select
               className="border p-2 pr-9 w-full rounded-md"
-              value={currentStudent.studentStatus}
+              value={currentStudent.gradeLevelName}
               onChange={(e) => {
-                const selectedStatus = studentStatuses.find(status => status.value === e.target.value);
                 setCurrentStudent({
                   ...currentStudent,
-                  studentStatus: e.target.value,
-                  statusId: selectedStatus ? selectedStatus.statusId : '',
+                  gradeLevelName: e.target.value,
                 });
               }}
             >
-              <option value="">اختر حالة الطالب</option>
-              {studentStatuses.map(status => (
-                <option key={status.value} value={status.value}>
-                  {status.label}
+              <option value="">اختر المستوى الدراسي</option>
+              {allGradeLevels.map((level) => (
+                <option key={level.gradeLevelId} value={level.levelName}>
+                  {level.levelName}
                 </option>
               ))}
             </select>
           </div>
-
+          
           <div className="mt-4">
-            <label>المستوى الدراسي:</label>
-            <input
-              type="text"
-              className="border p-2 w-full rounded-md"
-              value={currentStudent.gradeLevelName}
-              disabled 
+            <label>رفع المرفقات:</label>
+            <MultipleImageInput
+              images={images}
+              setImages={setImages}
+              max={5} 
             />
           </div>
 
           <div className="flex justify-between mt-4">
-            <button className="bg-[#4e73df] px-4 py-2 rounded text-white" onClick={handleSave}>
+            <Button
+              className="bg-[#4e73df] px-4 py-2 rounded text-white"
+              onClick={handleSave}
+              disabled={isSaving || !currentStudent.name || !currentStudent.classId || !currentStudent.statusId}
+            >
               {isEditing ? "حفظ التعديلات" : "إضافة طالب"}
-            </button>
-            <button onClick={closeModal} className="bg-red-500 px-4 py-2 rounded text-white">
+            </Button>
+            <Button onClick={closeModal} className="bg-red-500 px-4 py-2 rounded text-white">
               إلغاء
-            </button>
+            </Button>
           </div>
         </Modal>
       </div>
@@ -216,7 +272,7 @@ const StudentsTable = () => {
                   <td className={rowClasses}>{studentStatus || "غير متاح"}</td>
                   <td className={rowClasses}>{gradeLevelName || "غير متاح"}</td>
                   <td className={rowClasses}>
-                    <button
+                    <Button
                       onClick={() => openModal({
                         studentId,
                         name,
@@ -227,10 +283,10 @@ const StudentsTable = () => {
                       className="mr-2"
                     >
                       <FaEdit className="h-5 w-5 text-blue-600" />
-                    </button>
-                    <button onClick={() => handleDelete(studentId)}>
+                    </Button>
+                    <Button onClick={() => handleDelete(studentId)}>
                       <FaTrash className="h-5 w-5 text-red-600" />
-                    </button>
+                    </Button>
                   </td>
                 </tr>
               );

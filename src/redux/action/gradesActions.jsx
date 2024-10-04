@@ -4,7 +4,7 @@ import baseUrl from '../../api/api';
 
 export const getGrades = () => async (dispatch) => {
   try {
-    const response = await baseUrl.get('/api/grades');
+    const response = await baseUrl.get('/api/Grades');
     console.log('the grades action get grades', response.data);
     dispatch({
       type: GET_ALL_GRADES,
@@ -18,7 +18,8 @@ export const getGrades = () => async (dispatch) => {
 
 export const addGrade = (newGrade) => async (dispatch) => {
   try {
-    const response = await baseUrl.post('/api/grades', newGrade);
+    console.log('بيانات المرسلة:', newGrade);
+    const response = await baseUrl.post('/api/Grades', newGrade);
     console.log('post action', response.data);
     dispatch({
       type: ADD_GRADE,

@@ -14,7 +14,19 @@ import axios from 'axios';
           return config;
         },
         (error) => {
-         
+          return Promise.reject(error);
+        }
+      );
+
+      baseUrl.interceptors.response.use(
+        (response) => {
+          return response;
+        },
+        (error) => {
+          if (error.response && error.response.status === 401) {
+            window.location.href = '/';
+          }
+      
           return Promise.reject(error);
         }
       );
